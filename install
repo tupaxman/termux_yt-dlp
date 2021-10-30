@@ -1,0 +1,78 @@
+curl -sL https://raw.githubusercontent.com/tupaxman/termux_yt-dlp/main/yt-dlp.sh | bash
+
+----------------------------------------------------------------------------------------------------------------------
+which yt-dlp
+yt-dlp -U
+
+----------------------------------------------------------------------------------------------------------------------
+mkdir /data/data/com.termux/files/home/storage/shared/YouTube-dl
+
+
+----------------------------------------------------------------------------------------------------------------------
+pkg install nano
+
+
+----------------------------------------------------------------------------------------------------------------------
+mkdir -p ~/.config/yt-dlp
+
+
+----------------------------------------------------------------------------------------------------------------------
+mkdir ~/bin
+
+
+----------------------------------------------------------------------------------------------------------------------
+cd ~/bin
+
+
+----------------------------------------------------------------------------------------------------------------------
+nano termux-url-opener
+
+
+
+#!/bin/bash
+
+clear
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+if [[ $1 =~ ^.*youtu.*$ ]]; then
+	echo "${bold}yt-dlp${normal}"
+	echo "> ${1}"
+
+	echo $'\n Telecharger audio ou video ? (A/V/Q)'
+	read -p "> " -n 1 -r
+	echo $'\n'
+
+	if [[ $REPLY =~ ^[Aa]$ ]];then
+	echo 'Telechargement de audio seulement...'
+yt-dlp -x --audio-format mp3  -o "/data/data/com.termux/files/home/storage/shared/Youtube-dl/Musique/%(title)s.%(ext)s" $1
+	elif [[ $REPLY =~ ^[Vv]$ ]];then
+	
+	echo $'\n 4k (1) | 1080p (2) | 720p (3)'
+	read -p "> " -n 1 -r
+	echo $'\n'	
+	
+	if [[ $REPLY =~ ^[1]$ ]];then
+	echo "Telechargement de la video en 4k si dispo..."
+	yt-dlp --throttled-rate 100k --all-subs --embed-subs -f 'bestvideo[height<=2160]+bestaudio/best[height<=2160]' -o "/data/data/com.termux/files/home/storage/shared/Youtube-dl/Video/%(title)s.%(ext)s" $1
+	elif [[ $REPLY =~ ^[2]$ ]];then
+	echo "Telechargement de la video en 1080p si dispo..."
+	yt-dlp --throttled-rate 100k --all-subs --embed-subs -f 'bestvideo[height<=1080]+bestaudio/best[height<=1080]' -o "/data/data/com.termux/files/home/storage/shared/Youtube-dl/Video/%(title)s.%(ext)s" $1
+	elif [[ $REPLY =~ ^[3]$ ]];then
+	echo "Telechargement de la video en 720p si dispo..."
+	yt-dlp --throttled-rate 100k --all-subs --embed-subs -f 'bestvideo[height<=720]+bestaudio/best[height<=720]' -o "/data/data/com.termux/files/home/storage/shared/Youtube-dl/Video/%(title)s.%(ext)s" $1
+	else
+	echo "Adios amigos..."
+	fi
+	fi
+elif [[ $1 =~ ^.*nourlselected.*$ ]]; then
+	echo "ERROR1"
+	else
+	echo " Unhandled URL type:" $1
+fi
+
+----------------------------------------------------------------------------------------------------------------------
+termux-fix-shebang /data/data/com.termux/files/usr/bin/yt-dlp
+
+
+
